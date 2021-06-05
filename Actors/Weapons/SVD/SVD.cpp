@@ -3,6 +3,7 @@
 #include "NiagaraSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sandbox/Instances/SandboxGameInstance.h"
+#include "Sandbox/Actors/Attachments/SightAttachment.h"
 
 ASVD::ASVD() = default;
 
@@ -51,4 +52,30 @@ void ASVD::BeginPlay()
 	USandboxGameInstance* Instance = Cast<USandboxGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	AmmoData = Instance->SVDData();
+
+	SpawnScope();
 }
+
+void ASVD::SpawnScope()
+{
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Owner = this;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FVector TempVector = WeaponMesh->GetSocketLocation(ScopeSocketName);
+
+	FRotator TempRotator = WeaponMesh->GetSocketRotation(ScopeSocketName);
+
+	Sight = GetWorld()->SpawnActor<ASightAttachment>(Attachment, TempVector, TempRotator, SpawnInfo);
+
+	if (IsValid(Sight))
+	{
+		Sight->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, ScopeSocketName);
+
+		Sight->ShowRisAdapter(2);
+	}
+}
+
+void ASVD::ScopeSetup_Implementation(){}
+
+void ASVD::RemoveScopeWidget_Implementation(){}

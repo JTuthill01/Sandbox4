@@ -3,13 +3,9 @@
 #include "NiagaraSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sandbox/Instances/SandboxGameInstance.h"
+#include "Sandbox/Actors/Attachments/SightAttachment.h"
 
-ABelgianAR::ABelgianAR()
-{
-	Sight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sight"));
-	Sight->SetCastShadow(false);
-	Sight->SetupAttachment(WeaponMesh, "SightAttachmentPoint");
-}
+ABelgianAR::ABelgianAR() = default;
 
 void ABelgianAR::WeaponFire(EFireType FireType)
 {
@@ -56,6 +52,31 @@ void ABelgianAR::BeginPlay()
 	USandboxGameInstance* Instance = Cast<USandboxGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	AmmoData = Instance->BelgianARData();
+
+	//SpawnScope();
 }
 
+void ABelgianAR::SpawnScope()
+{
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Owner = this;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FVector TempVector = WeaponMesh->GetSocketLocation(ScopeSocketName);
+
+	FRotator TempRotator = WeaponMesh->GetSocketRotation(ScopeSocketName);
+
+	Sight = GetWorld()->SpawnActor<ASightAttachment>(Attachment, TempVector, TempRotator, SpawnInfo);
+
+	if (IsValid(Sight))
+	{
+		Sight->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, ScopeSocketName);
+
+		Sight->ShowRisAdapter(0);
+	}
+}
+
+void ABelgianAR::BelgianScopeSetup_Implementation(){}
+
+void ABelgianAR::BelgianRemoveScopeWidget_Implementation(){}
 

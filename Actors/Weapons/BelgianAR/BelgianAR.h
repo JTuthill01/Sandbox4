@@ -12,6 +12,13 @@ class SANDBOX_API ABelgianAR : public AWeaponBase
 public:
 	ABelgianAR();
 
+public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BelgianScopeSetup();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BelgianRemoveScopeWidget();
+
 protected:
 	void WeaponFire(EFireType FireType) override;
 
@@ -19,6 +26,17 @@ protected:
 
 	void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UStaticMeshComponent* Sight;
+protected:
+	UFUNCTION(BlueprintCallable)
+	void SpawnScope();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sight)
+	FName ScopeSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Sight)
+	class ASightAttachment* Sight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Sight)
+	TSubclassOf<class ASightAttachment> Attachment;
 };

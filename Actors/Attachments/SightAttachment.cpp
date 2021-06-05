@@ -72,7 +72,7 @@ void ASightAttachment::ShowRisAdapter(int32 AdapterID)
 
 	case 1:
 
-		RIS_Adapter_Mid->SetVisibility(true);
+		Strike_Ironsight->SetVisibility(true);
 
 		break;
 
@@ -92,7 +92,7 @@ void ASightAttachment::ClearAllAdapters()
 {
 	RIS_Adapter->SetVisibility(false);
 
-	RIS_Adapter_Mid->SetVisibility(false);
+	Strike_Ironsight->SetVisibility(false);
 
 	RIS_Adapter_High->SetVisibility(false);
 }

@@ -13,7 +13,13 @@ public:
 	// Sets default values for this actor's properties
 	ASightAttachment();
 
-protected:
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleans)
+	bool bBCloserToFaceSightAtachment;
+
+	UFUNCTION(BlueprintCallable)
+	void ShowRisAdapter(int32 AdapterID);
+
 	UFUNCTION(BlueprintCallable)
 	void ActivateForwardRenderTexture(class UTextureRenderTarget2D* LensBehind, class UTextureRenderTarget2D* LensReflection);
 
@@ -25,9 +31,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void EnableLensReflection();
-
-	UFUNCTION(BlueprintCallable)
-	void ShowRisAdapter(int32 AdapterID);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearAllAdapters();
@@ -59,9 +62,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Scene)
 	class UMaterialInterface* LensMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleans)
-	bool bBCloserToFaceSightAtachment;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleans)
 	bool bUseRenderToTexture;

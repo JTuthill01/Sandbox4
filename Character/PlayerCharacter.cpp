@@ -14,6 +14,8 @@
 #include "Sandbox/Actors/Weapons/WarHammer/WarHammer.h"
 #include "Sandbox/Interfaces/OnInteract.h"
 #include "Sandbox/Actors/Grenades/GrenadeBase.h"
+#include "Sandbox/Actors/Weapons/SVD/SVD.h"
+#include "Sandbox/Actors/Weapons/BelgianAR/BelgianAR.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -28,6 +30,10 @@ APlayerCharacter::APlayerCharacter()
 	Arms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms"));
 	Arms->SetupAttachment(Camera);
 	Arms->SetCastShadow(false);
+
+	ADSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ADS Camera"));
+	ADSCamera->bUsePawnControlRotation = true;
+	ADSCamera->SetupAttachment(Camera);
 
 	bCanFire = true;
 	bCanSwitchWeapon = true;
@@ -756,6 +762,22 @@ void APlayerCharacter::StopADS_Walk()
 	}
 }
 
+void APlayerCharacter::ADSCameraActivate()
+{
+	Camera->Deactivate();
+
+	ADSCamera->Activate();
+
+	GetWorldTimerManager().ClearTimer(ADSCameraTimerHandle);
+}
+
+void APlayerCharacter::CameraActivated()
+{
+	Camera->Activate();
+
+	ADSCamera->Deactivate();
+}
+
 void APlayerCharacter::Melee()
 {
 	if (IsValid(HammerSpawn))
@@ -869,6 +891,18 @@ void APlayerCharacter::ADSPressed()
 		Instance->Montage_Play(ADSMontage_Idle[WeaponIndex]);
 	}
 
+	if (CurrentWeapon->WeaponType == EWeaponType::SVD)
+	{
+		class ASVD* TempSVD = Cast<ASVD>(CurrentWeapon);
+
+		if (IsValid(TempSVD))
+		{
+			TempSVD->ScopeSetup();
+
+			GetWorldTimerManager().SetTimer(ADSCameraTimerHandle, this, &APlayerCharacter::ADSCameraActivate, 0.3F);
+		}
+	}
+
 	bCanUseADS_Walk = true;
 
 	bCanUseADS_Fire = true;
@@ -876,6 +910,8 @@ void APlayerCharacter::ADSPressed()
 
 void APlayerCharacter::ADSReleased()
 {
+	CameraActivated();
+
 	bCanUseADS_Idle = false;
 
 	bCanUseADS_Walk = false;
@@ -892,6 +928,16 @@ void APlayerCharacter::ADSReleased()
 	if (Instance->Montage_IsPlaying(ADSMontage_Fire[WeaponIndex]))
 	{
 		Instance->Montage_Stop(ADSBlendOutTime, ADSMontage_Fire[WeaponIndex]);
+	}
+
+	if (CurrentWeapon->WeaponType == EWeaponType::SVD)
+	{
+		class ASVD* TempSVD = Cast<ASVD>(CurrentWeapon);
+
+		if (IsValid(TempSVD))
+		{
+			TempSVD->RemoveScopeWidget();
+		}
 	}
 }
 

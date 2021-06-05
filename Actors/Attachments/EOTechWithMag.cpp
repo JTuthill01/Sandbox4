@@ -1,0 +1,2 @@
+#include "EOTechWithMag.h"
+

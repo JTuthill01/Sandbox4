@@ -120,6 +120,7 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
+protected:
 	UFUNCTION(BlueprintCallable)
 	void ShowWeapon(AWeaponBase* Weapon);
 
@@ -171,6 +172,12 @@ protected:
 	UFUNCTION()
 	void StopADS_Walk();
 
+	UFUNCTION()
+	void ADSCameraActivate();
+
+	UFUNCTION()
+	void CameraActivated();
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lux")
@@ -197,6 +204,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* ADSCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	TArray<class UAnimMontage*> FireMonatge;
@@ -382,4 +392,5 @@ private:
 	bool bShouldBeShown;
 
 	FTimerHandle PickupTimerHandle;
+	FTimerHandle ADSCameraTimerHandle;
 };
